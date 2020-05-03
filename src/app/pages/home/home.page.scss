@@ -1,0 +1,43 @@
+.botonesPrincipales {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
+.filas {
+  height: 50%;
+}
+
+.grilla 
+{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.icono {
+  font-size: 1800%;
+}
+
+.labelBotonCosasLindas {
+  color: #fff;
+  font: normal 35px 'Pacifico',serif;
+  //font-family: 'Pacifico';
+  text-shadow: 3px 3px 0 #000;
+  margin: 0.5em 0 0;
+}
+
+.labelBotonCosasFeas{
+  color: #fff;
+  font: normal 48px 'Emilys Candy',serif;
+  text-shadow: 3px 3px 0 #000;
+  margin: 0.5em 0 0;
+}
+
+
+@font-face {
+  font-family: 'Pacifico';
+  src: url('../../../assets/fonts/Pacifico-Regular.ttf');//mine
+}
