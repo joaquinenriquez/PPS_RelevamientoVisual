@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "ionic-login-basico": {
+      "hosting": {
+        "app": [
+          "ionic-login-basico"
+        ]
+      }
+    }
+  }
+}

@@ -1,4 +1,6 @@
+import { TipoPublicacion, enumTipoDeCosa } from './../../model/tipo-publicacion';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -7,6 +9,20 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  constructor() {}
+  public publicacionSeleccionada: TipoPublicacion; 
+
+  constructor(private router: Router) {}
+
+  botonCosasLindas_Click() 
+  {
+    this.publicacionSeleccionada = new TipoPublicacion(enumTipoDeCosa.COSAS_LINDAS);
+    this.router.navigateByUrl('publicaciones/', {state: this.publicacionSeleccionada});
+  }
+
+  botonCosasFeas_Click()
+  {
+    this.publicacionSeleccionada = new TipoPublicacion(enumTipoDeCosa.COSAS_FEAS);
+    this.router.navigateByUrl('publicaciones/', {state: this.publicacionSeleccionada});
+  }
 
 }

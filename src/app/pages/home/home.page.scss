@@ -3,6 +3,7 @@
   height: 100%;
   margin: 0;
   padding: 0;
+
 }
 
 
@@ -10,7 +11,7 @@
   height: 50%;
 }
 
-.grilla 
+.grilla
 {
   height: 100%;
   margin: 0;
@@ -18,20 +19,38 @@
 }
 
 .icono {
-  font-size: 1800%;
+  font-size: 2000%;
+
+
 }
 
 .labelBotonCosasLindas {
-  color: #fff;
-  font: normal 35px 'Pacifico',serif;
+  // color: #fff;
+  font: normal 35px 'Billabong',serif;
   //font-family: 'Pacifico';
   text-shadow: 3px 3px 0 #000;
-  margin: 0.5em 0 0;
+  margin: 0.5em 0 0;  
+
+
 }
 
+@keyframes cambia-color{
+  0%{
+      background-position: 0%, 50%;
+  }
+  
+  50%{
+      background-position: 100%, 50%;
+  }
+  
+  100%{
+      background-position: 0%, 100%;
+  }
+}
+
+
 .labelBotonCosasFeas{
-  color: #fff;
-  font: normal 48px 'Emilys Candy',serif;
+  font: normal 35px 'Billabong',serif;
   text-shadow: 3px 3px 0 #000;
   margin: 0.5em 0 0;
 }
@@ -41,3 +60,13 @@
   font-family: 'Pacifico';
   src: url('../../../assets/fonts/Pacifico-Regular.ttf');//mine
 }
+
+@font-face {
+  font-family: 'Billabong';
+  src: url('../../../assets/fonts/Billabong.ttf');//mine
+}
+
+
+
+
+
