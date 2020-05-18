@@ -2,7 +2,7 @@ import { AfsService } from './../../services/afs.service';
 import { Observable } from 'rxjs';
 import { DbfService } from './../../services/dbf.service';
 import { NuevaPublicacionComponent } from './../../components/nueva-publicacion/nueva-publicacion.component';
-import { TipoPublicacion } from './../../model/tipo-publicacion';
+import { TipoPublicacion, enumTipoDeCosa } from './../../model/tipo-publicacion';
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
@@ -45,7 +45,14 @@ export class PublicacionesPage implements OnInit {
 
     // Obtenemos el tipo de publicacion que nos pasaron desde la pagina anterior (la de los botones)
     this.rutaActual.paramMap.pipe(map(() => window.history.state)).subscribe((tipoPublicacionSeleccionada) => {
-      this.tipoPublicacion = tipoPublicacionSeleccionada
+
+      if (tipoPublicacionSeleccionada != null) {
+        this.tipoPublicacion = tipoPublicacionSeleccionada;
+      } else {
+        this.tipoPublicacion = new TipoPublicacion(enumTipoDeCosa.COSAS_LINDAS);
+      }
+
+
     });
 
     // Nos traemos las publicaciones desde firebase

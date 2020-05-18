@@ -1,6 +1,6 @@
 <ion-header>
 
-  <ion-toolbar [color]="tipoPublicacion.color">
+  <ion-toolbar [color]="tipoPublicacion.colorPrincipal">
 
     <ion-icon slot="start" [src]="tipoPublicacion.pathIcono" class="icono"></ion-icon>
     <ion-title>{{tipoPublicacion.titulo}}</ion-title>
@@ -13,7 +13,7 @@
   
   <ion-card color="dark" *ngFor="let unaPublicacion of publicaciones$ | async">
 
-    <ion-item>
+    <ion-item [color]="this.tipoPublicacion.colorSecundario">
       <ion-avatar slot="start">
         <ion-img [src]="unaPublicacion.referenciaFotoPerfilUsuario" ></ion-img>
       </ion-avatar>
@@ -38,7 +38,7 @@
 
 
 <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-  <ion-fab-button (click)="sacarUnaFoto()" [color]="this.tipoPublicacion.color">
+  <ion-fab-button (click)="sacarUnaFoto()" [color]="this.tipoPublicacion.colorPrincipal">
     <ion-icon name="add"></ion-icon>
   </ion-fab-button>
 </ion-fab>

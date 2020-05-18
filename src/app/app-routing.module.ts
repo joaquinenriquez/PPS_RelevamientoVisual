@@ -21,8 +21,17 @@ const routes: Routes = [
   {
     path: 'publicaciones/:tipo-de-cosa',
     loadChildren: () => import('./pages/publicaciones/publicaciones.module').then( m => m.PublicacionesPageModule)
+  }, 
+
+  {
+    path: 'publicaciones',
+    loadChildren: () => import('./pages/publicaciones/publicaciones.module').then( m => m.PublicacionesPageModule)
+  },  {
+    path: 'pruebas',
+    loadChildren: () => import('./pages/pruebas/pruebas.module').then( m => m.PruebasPageModule)
   }
-  
+
+
 ];
 
 @NgModule({

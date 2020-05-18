@@ -1,6 +1,6 @@
 <ion-header>
 
-  <ion-toolbar [color]="this.tipoPublicacion.color">
+  <ion-toolbar [color]="this.tipoPublicacion.colorPrincipal">
 
     <ion-icon slot="start" [src]="this.tipoPublicacion.pathIcono" class="icono"></ion-icon>
     <ion-title>{{this.tipoPublicacion.titulo}}</ion-title>
@@ -8,10 +8,9 @@
   </ion-toolbar>
 
 </ion-header>
-
 <ion-content color="dark" class="no-scroll">
-
-  <ion-card style="height: 95%" color="colorrosa" class="no-scroll">
+  <div>{{ this.almacenFotos.porcentajeSubido | async }}</div>
+  <ion-card style="height: 95%" [color]="this.tipoPublicacion.colorSecundario" class="no-scroll">
 
     <ion-item color="coloravatarcosaslindas">
       <ion-avatar slot="start">
@@ -24,7 +23,7 @@
     <ion-card-content>
 
       <!-- Mosstramos este mensaje cuando no tenemos noticias. Utilizamos Sliders porque es una manera facil de centrar el texto -->
-      
+
       <ion-slides [options]="sliderOpts" *ngIf="foto === undefined">
         <ion-slide class="watermarked">
           <ion-label style="opacity: 0.8;">Toma una fotografía o sube una desde la galería</ion-label>
@@ -36,11 +35,17 @@
     </ion-card-content>
 
   </ion-card>
+
+
+
+
+
+
 </ion-content>
 
 <ion-footer>
 
-  <ion-toolbar no-padding no-margin [color]="this.tipoPublicacion.color">
+  <ion-toolbar no-padding no-margin [color]="this.tipoPublicacion.colorPrincipal">
 
     <ion-segment *ngIf="foto === undefined">
       <ion-segment-button value="camara" (click)="tomarUnaFoto()">

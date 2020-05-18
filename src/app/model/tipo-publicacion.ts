@@ -10,7 +10,8 @@ export class TipoPublicacion {
     tipoDeCosa: enumTipoDeCosa;
     titulo: string;
     pathIcono: string;
-    color: string;
+    colorPrincipal: string;
+    colorSecundario: string;
     pathFotos: string;
 
     // #endregion
@@ -21,19 +22,21 @@ export class TipoPublicacion {
 
             case enumTipoDeCosa.COSAS_LINDAS: {
                 this.tipoDeCosa = enumTipoDeCosa.COSAS_LINDAS;
-                this.titulo = "Cosas Lindas";
-                this.pathIcono = "assets/svg/cosaslindas_outline.svg"
-                this.color = "colorcosaslindas";
-                this.pathFotos = "cosaslindas/";
+                this.titulo = 'Cosas Lindas';
+                this.pathIcono = 'assets/svg/cosaslindas_outline.svg';
+                this.colorPrincipal = 'colorcosaslindas';
+                this.colorSecundario = 'cosaslindas_secundario';
+                this.pathFotos = 'cosaslindas/';
                 break;
             }
 
             case enumTipoDeCosa.COSAS_FEAS: {
                 this.tipoDeCosa = enumTipoDeCosa.COSAS_FEAS;
-                this.titulo = "Cosas Feas";
-                this.pathIcono = "assets/svg/cosasfeas_outline.svg"
-                this.color = "colorcosasfeas";
-                this.pathFotos = "cosasfeas/";
+                this.titulo = 'Cosas Feas';
+                this.pathIcono = 'assets/svg/cosasfeas_outline.svg';
+                this.colorPrincipal = 'colorcosasfeas';
+                this.colorSecundario = 'cosaslindas_secundario';
+                this.pathFotos = 'cosasfeas/';
                 break;
             }
         }

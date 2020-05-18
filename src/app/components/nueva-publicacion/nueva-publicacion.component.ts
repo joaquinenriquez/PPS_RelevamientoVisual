@@ -3,7 +3,7 @@ import { DbfService } from './../../services/dbf.service';
 import { AuthService } from './../../services/auth.service';
 import { AfsService } from './../../services/afs.service';
 import { CamaraService } from './../../services/camara.service';
-import { TipoPublicacion } from './../../model/tipo-publicacion';
+import { TipoPublicacion, enumTipoDeCosa } from './../../model/tipo-publicacion';
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
@@ -19,7 +19,7 @@ export class NuevaPublicacionComponent implements OnInit {
   foto: string;
   usuarioActual: firebase.User;
   fotoUsuarioActual: string;
-
+  porcentaje;
 
   // Como son slides hacemos esto para quitarle el efecto de pasar
   sliderOpts = {
@@ -28,14 +28,19 @@ export class NuevaPublicacionComponent implements OnInit {
   };
 
   constructor(private camara: CamaraService,
-    private almacenFotos: AfsService,
-    private auth: AuthService,
-    private controladorModal: ModalController,
-    private db: DbfService) { }
+              public almacenFotos: AfsService,
+              private auth: AuthService,
+              private controladorModal: ModalController,
+              private db: DbfService) {
+
+                if (this.tipoPublicacion === null) {
+                  this.tipoPublicacion = new TipoPublicacion(enumTipoDeCosa.COSAS_LINDAS);
+                }
+    }
 
   ngOnInit() {
     this.usuarioActual = this.auth.usuarioActual;
-    let rutaFotoPerfilUsuarioActual = `/fotosperfilusuarios/${this.usuarioActual.email}.jpg`;
+    const rutaFotoPerfilUsuarioActual = `/fotosperfilusuarios/${this.usuarioActual.email}.jpg`;
     this.almacenFotos.obtenerReferenciaAUnArchivo(rutaFotoPerfilUsuarioActual)
       .getDownloadURL().subscribe((foto) => { this.fotoUsuarioActual = foto });
   }
@@ -44,27 +49,40 @@ export class NuevaPublicacionComponent implements OnInit {
     this.foto = await this.camara.tomarUnaFotoCamara();
   }
 
+  async abrirGaleria() {
+    this.foto = await this.camara.abrirGaleriaFotos();
+  }
+
+  cancelarPublicacion() {
+    this.foto = undefined;
+  }
+
   async publicar() {
 
     // Subuimos la foto
-    const nombreFoto = this.subirFoto();
+    const urlFoto = this.subirFoto();
 
     // Guardamos los datos (usuario, fecha, etc.)
-    this.guardarDatosPublicacion(nombreFoto);
+    //this.guardarDatosPublicacion(urlFoto);
 
     // Cerramos el modal
-    this.controladorModal.dismiss();
+    //this.controladorModal.dismiss();
   }
 
-  async subirFoto() {
+
+  async subirFoto() 
+  {
     // Generamos un nombre aleatorio para la foto
-    const nombreFoto = Math.random().toString(36).substring(2) + ".jpg";
+    const nombreFoto = Math.random().toString(36).substring(2) + '.jpg';
 
     // Definimos la ruta destino en Firebase
     const rutaDestinoEnFirebase = this.tipoPublicacion.pathFotos + nombreFoto;
 
-    // Subimos la foto al storage de firebase
-    return this.almacenFotos.subirUnaFoto2(rutaDestinoEnFirebase, this.foto);
+    // Convertimos la foto en blob (que es lo que soporta firebase)
+    const archivoEnBlob = await fetch(this.foto).then(r => r.blob());
+
+
+    return this.almacenFotos.subirArchivo(archivoEnBlob, rutaDestinoEnFirebase);
   }
 
   async guardarDatosPublicacion(nombreFoto) {
@@ -82,12 +100,6 @@ export class NuevaPublicacionComponent implements OnInit {
   }
 
 
-  cancelarPublicacion() {
-    this.foto = undefined;
-  }
 
-  async abrirGaleria() {
-    this.foto = await this.camara.abrirGaleriaFotos();
-  }
 
 }

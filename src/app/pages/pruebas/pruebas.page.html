@@ -1,0 +1,13 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>pruebas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <input type="file" (change)="this.afs.subirUnaFoto2($event)" />
+  <div>{{ this.afs.uploadPercent | async }}</div>
+  <a [href]="this.afs.downloadURL | async">{{ this.afs.downloadURL | async }}</a>
+
+</ion-content>
