@@ -13,8 +13,9 @@ export class AfsService {
 
   constructor(private almacenArchivos: AngularFireStorage) { }
 
-  porcentajeSubido: Observable<number>;
+  porcentajeSubido: Observable<number> = new Observable<number>();
   downloadURL: Observable<string>;
+  tarea;
 
 
   subirArchivo(archivo, rutaDestinoEnFirebase: string) {
@@ -23,14 +24,15 @@ export class AfsService {
 
     // El método uplodad() recibe el patch destino incluyendo el nombre que va a tener el archivo subido y el archivo a subir
     // Nos devuvle un objeto tipo AngularFireUploadTask que nos va a permitir monitorear como suben los archivos
-    const tarea = this.almacenArchivos.upload(rutaDestinoEnFirebase, archivo);
+    this.tarea = this.almacenArchivos.upload(rutaDestinoEnFirebase, archivo);
 
     // Observamos el porcentaje de subido a traves de la propiedad percentageChanges()
-    this.porcentajeSubido = tarea.percentageChanges();
+    this.porcentajeSubido = this.tarea.percentageChanges();
 
     // Nos va a notificar cuando el archivo este listo el link para acceder al archivo
-    tarea.snapshotChanges().pipe(
+    this.tarea.snapshotChanges().pipe(
         finalize(() => this.downloadURL = referenciaArchivo.getDownloadURL() )
+        // finalize(() => alert('termino') )
      )
     .subscribe();
 
@@ -97,6 +99,32 @@ export class AfsService {
 
   public obtenerReferenciaFotoPerfil(nombreUsuario: string) {
     return this.almacenArchivos.ref(`/fotosperfilusuarios/${nombreUsuario}.jpg`);
+  }
+
+  subirArchivo2(archivo, rutaDestinoEnFirebase: string, callback) {
+
+    const referenciaArchivo = this.almacenArchivos.ref(rutaDestinoEnFirebase);
+
+    // El método uplodad() recibe el patch destino incluyendo el nombre que va a tener el archivo subido y el archivo a subir
+    // Nos devuvle un objeto tipo AngularFireUploadTask que nos va a permitir monitorear como suben los archivos
+    const tarea = this.almacenArchivos.upload(rutaDestinoEnFirebase, archivo);
+
+    // Observamos el porcentaje de subido a traves de la propiedad percentageChanges()
+    this.porcentajeSubido = tarea.percentageChanges();
+
+    // Nos va a notificar cuando el archivo este listo el link para acceder al archivo
+    tarea.snapshotChanges().pipe(
+        // finalize(() => this.downloadURL = referenciaArchivo.getDownloadURL() )
+        finalize(() => {
+
+          this.downloadURL = referenciaArchivo.getDownloadURL();
+          callback() 
+          
+        })
+     )
+    .subscribe();
+
+    return this.downloadURL;
   }
 
 

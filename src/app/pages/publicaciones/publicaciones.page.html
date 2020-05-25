@@ -24,9 +24,9 @@
       <ion-img [src]="unaPublicacion.nombreFoto"></ion-img>
     </ion-card-content>
 
-    <ion-item>
-      <ion-button>
-        <ion-icon name="star"></ion-icon>
+    <ion-item [color]="tipoPublicacion.colorSecundario">
+      <ion-button [color]="tipoPublicacion.colorPrincipal" (click)="votarFoto(unaPublicacion)">
+        <ion-icon [name]="unaPublicacion.votoUsuarioActual? 'star': 'star-outline'"></ion-icon>
       </ion-button>
     </ion-item>
 
@@ -42,7 +42,6 @@
     <ion-icon name="add"></ion-icon>
   </ion-fab-button>
 </ion-fab>
-
 
 
 <!-- 

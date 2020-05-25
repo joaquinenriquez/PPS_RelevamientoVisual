@@ -13,6 +13,9 @@ export class TipoPublicacion {
     colorPrincipal: string;
     colorSecundario: string;
     pathFotos: string;
+    nombreColeccion: string;
+    claseToast: string;
+    claseLoading: string;
 
     // #endregion
 
@@ -27,6 +30,10 @@ export class TipoPublicacion {
                 this.colorPrincipal = 'colorcosaslindas';
                 this.colorSecundario = 'cosaslindas_secundario';
                 this.pathFotos = 'cosaslindas/';
+                this.nombreColeccion = 'publicacionesCosasLindas';
+                this.claseToast = 'cosas-lindas-toast';
+                this.claseLoading = 'cosas-lindas-loading';
+
                 break;
             }
 
@@ -35,8 +42,11 @@ export class TipoPublicacion {
                 this.titulo = 'Cosas Feas';
                 this.pathIcono = 'assets/svg/cosasfeas_outline.svg';
                 this.colorPrincipal = 'colorcosasfeas';
-                this.colorSecundario = 'cosaslindas_secundario';
+                this.colorSecundario = 'cosasfeas_secundario';
                 this.pathFotos = 'cosasfeas/';
+                this.nombreColeccion = 'publicacionesCosasFeas';
+                this.claseToast = 'cosas-feas-toast';
+                this.claseLoading = 'cosas-feas-loading';
                 break;
             }
         }

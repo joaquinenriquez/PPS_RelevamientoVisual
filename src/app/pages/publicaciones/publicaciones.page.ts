@@ -1,3 +1,5 @@
+import { AuthService } from './../../services/auth.service';
+import { Usuario } from './../../model/usuario';
 import { AfsService } from './../../services/afs.service';
 import { Observable } from 'rxjs';
 import { DbfService } from './../../services/dbf.service';
@@ -8,9 +10,10 @@ import { ActivatedRoute } from '@angular/router';
 
 // Para sacar fotos desde el chrome
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { IPublicacion } from 'src/app/model/ipublicacion';
 import { map } from 'rxjs/operators';
+import { IVoto } from 'src/app/model/ivoto';
 
 // Call the element loader after the platform has been bootstrapped
 defineCustomElements(window);
@@ -24,8 +27,6 @@ defineCustomElements(window);
 
 export class PublicacionesPage implements OnInit {
 
-  foto;
-
   // #region Atributos
 
   // Listado de publicaciones que obtenemos desde Firebase
@@ -34,12 +35,18 @@ export class PublicacionesPage implements OnInit {
   // Tipo de publicacion que nos van a pasar desde la pagina anterior (la de los botones)
   tipoPublicacion: TipoPublicacion;
 
+  foto;
+
+  usuarioActual: firebase.User;
+
   // #endregion 
 
   constructor(private rutaActual: ActivatedRoute, // Para saber la ruta actual
     private controladorModal: ModalController, // Para mostrar los modales
     private dbf: DbfService,
-    public almacenFotos: AfsService) { }
+    public almacenFotos: AfsService,
+    public auth: AuthService,
+    public toastctrl: ToastController) { }
 
   ngOnInit() {
 
@@ -52,15 +59,21 @@ export class PublicacionesPage implements OnInit {
         this.tipoPublicacion = new TipoPublicacion(enumTipoDeCosa.COSAS_LINDAS);
       }
 
+      // Nos traemos el usuario actual
+      this.usuarioActual = this.auth.usuarioActual;
+
+      // Nos traemos las publicaciones desde firebase
+      this.publicaciones$ = this.dbf.traerTodosLasPublicaciones(this.tipoPublicacion.nombreColeccion);
 
     });
 
-    // Nos traemos las publicaciones desde firebase
-    this.publicaciones$ = this.dbf.traerTodosLasPublicaciones();
+
 
     this.almacenFotos.obtenerReferenciaAUnArchivo('/fotosperfilusuarios/invitado.jpg').getDownloadURL().subscribe((foto) => {
       this.foto = foto;
     })
+
+
   }
 
   async sacarUnaFoto() {
@@ -84,14 +97,48 @@ export class PublicacionesPage implements OnInit {
 
   }
 
-  obtenerFotoDePerfilUsuarioPublicacion(nombreUsuario: string )
-  {
+  obtenerFotoDePerfilUsuarioPublicacion(nombreUsuario: string) {
     let unaFoto;
     this.almacenFotos.obtenerReferenciaAUnArchivo('/fotosperfilusuarios/invitado.jpg').getDownloadURL().subscribe((foto) => {
       this.foto = foto;
     });
 
     return this.foto;
+  }
+
+
+
+  votarFoto(unaPublicacion: IPublicacion) {
+    this.dbf.traerVotosDeUnUsuario(this.usuarioActual, unaPublicacion.id).then(querySnapshot => {
+      if (querySnapshot.size > 0) {
+        this.mostrarToast('Ya votaste! Solo se puede votar una vez por publicacion');
+      } else {
+
+        const nuevoVoto: IVoto =
+        {
+          idPublicacion: unaPublicacion.id,
+          usuario: this.usuarioActual.email
+        }
+
+        this.dbf.votarUnaFoto(nuevoVoto);
+        unaPublicacion.votoUsuarioActual = true;
+
+      }
+    }).catch(function (error) {
+      console.log("Error getting documents: ", error);
+    });
+  }
+
+
+
+  async mostrarToast(mensaje: string) {
+    const toast = await this.toastctrl.create({
+      cssClass: this.tipoPublicacion.claseToast,
+      message: mensaje,
+      duration: 2000,
+      position: "middle"
+    });
+    toast.present();
   }
 
 }

@@ -5,7 +5,7 @@ import { AfsService } from './../../services/afs.service';
 import { CamaraService } from './../../services/camara.service';
 import { TipoPublicacion, enumTipoDeCosa } from './../../model/tipo-publicacion';
 import { Component, OnInit, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-nueva-publicacion',
@@ -20,6 +20,7 @@ export class NuevaPublicacionComponent implements OnInit {
   usuarioActual: firebase.User;
   fotoUsuarioActual: string;
   porcentaje;
+  loading;
 
   // Como son slides hacemos esto para quitarle el efecto de pasar
   sliderOpts = {
@@ -28,15 +29,16 @@ export class NuevaPublicacionComponent implements OnInit {
   };
 
   constructor(private camara: CamaraService,
-              public almacenFotos: AfsService,
-              private auth: AuthService,
-              private controladorModal: ModalController,
-              private db: DbfService) {
+    public almacenFotos: AfsService,
+    private auth: AuthService,
+    private controladorModal: ModalController,
+    private db: DbfService,
+    public loadingController: LoadingController) {
 
-                if (this.tipoPublicacion === null) {
-                  this.tipoPublicacion = new TipoPublicacion(enumTipoDeCosa.COSAS_LINDAS);
-                }
+    if (this.tipoPublicacion === null) {
+      this.tipoPublicacion = new TipoPublicacion(enumTipoDeCosa.COSAS_LINDAS);
     }
+  }
 
   ngOnInit() {
     this.usuarioActual = this.auth.usuarioActual;
@@ -57,21 +59,11 @@ export class NuevaPublicacionComponent implements OnInit {
     this.foto = undefined;
   }
 
+
+
+
   async publicar() {
 
-    // Subuimos la foto
-    const urlFoto = this.subirFoto();
-
-    // Guardamos los datos (usuario, fecha, etc.)
-    //this.guardarDatosPublicacion(urlFoto);
-
-    // Cerramos el modal
-    //this.controladorModal.dismiss();
-  }
-
-
-  async subirFoto() 
-  {
     // Generamos un nombre aleatorio para la foto
     const nombreFoto = Math.random().toString(36).substring(2) + '.jpg';
 
@@ -81,9 +73,25 @@ export class NuevaPublicacionComponent implements OnInit {
     // Convertimos la foto en blob (que es lo que soporta firebase)
     const archivoEnBlob = await fetch(this.foto).then(r => r.blob());
 
+    this.mostrarLoading("Publicando foto...");
 
-    return this.almacenFotos.subirArchivo(archivoEnBlob, rutaDestinoEnFirebase);
+    this.almacenFotos.subirArchivo2(archivoEnBlob, rutaDestinoEnFirebase, (nombreFoto) => {
+      
+      this.almacenFotos.downloadURL.subscribe(url => {
+        // Guardamos los datos (usuario, fecha, etc.)
+        this.guardarDatosPublicacion(url);
+
+        // Ocultamos el loading
+        this.loading.dismiss();
+
+        // Ocultamos el modal
+        this.controladorModal.dismiss();
+      });
+
+    });
   }
+
+
 
   async guardarDatosPublicacion(nombreFoto) {
     const nuevaPublicacion: IPublicacion =
@@ -92,7 +100,8 @@ export class NuevaPublicacionComponent implements OnInit {
       'fechaHora': new Date(),
       'emailUsuarioCreador': this.usuarioActual.email,
       'referenciaFotoPerfilUsuario': this.fotoUsuarioActual,
-      'timeStamp': + new Date()
+      'timeStamp': + new Date(),
+      'votoUsuarioActual': false
     }
 
     this.db.agregarPublicacion(nuevaPublicacion);
@@ -100,6 +109,19 @@ export class NuevaPublicacionComponent implements OnInit {
   }
 
 
+  async mostrarLoading(mensaje: string) {
+    this.loading = await this.loadingController.create({
+      cssClass: this.tipoPublicacion.claseLoading,
+      spinner: "bubbles",
+      message: mensaje,
+      translucent: true,
+      backdropDismiss: true
+    });
+    await this.loading.present();
+
+    const { role, data } = await this.loading.onDidDismiss();
+    console.log('Loading dismissed with role:', role);
+  }
 
 
 }

@@ -9,10 +9,12 @@
 
 </ion-header>
 <ion-content color="dark" class="no-scroll">
-  <div>{{ this.almacenFotos.porcentajeSubido | async }}</div>
+  
+  <div *ngIf="foto !== undefined"><ion-progress-bar [color]="this.tipoPublicacion.colorPrincipal" [value]="(this.almacenFotos.porcentajeSubido | async) / 100"></ion-progress-bar></div>
+
   <ion-card style="height: 95%" [color]="this.tipoPublicacion.colorSecundario" class="no-scroll">
 
-    <ion-item color="coloravatarcosaslindas">
+    <ion-item [color]="this.tipoPublicacion.colorPrincipal">
       <ion-avatar slot="start">
         <ion-img [src]="fotoUsuarioActual"></ion-img>
       </ion-avatar>
@@ -32,12 +34,12 @@
 
       <ion-img class="foto" *ngIf="foto !== undefined" [src]="foto"></ion-img>
 
+
+  
+
     </ion-card-content>
 
   </ion-card>
-
-
-
 
 
 

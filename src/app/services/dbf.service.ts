@@ -1,3 +1,4 @@
+import { TipoPublicacion } from './../model/tipo-publicacion';
 import { IPublicacion } from 'src/app/model/ipublicacion';
 import { Injectable } from '@angular/core';
 
@@ -7,6 +8,7 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/fire
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Publicacion } from '../model/publicacion';
+import { IVoto } from '../model/ivoto';
 
 
 @Injectable({
@@ -15,11 +17,15 @@ import { Publicacion } from '../model/publicacion';
 export class DbfService {
 
   coleccionPublicaciones: AngularFirestoreCollection<IPublicacion>;
+  coleccionVotos: AngularFirestoreCollection<IVoto>;
   referenciaColeccionPublicaciones;
+  tipoPublicacion: string;
 
   constructor(private db: AngularFirestore) {
-    this.coleccionPublicaciones = this.db.collection<IPublicacion>('publicaciones');
+    // this.coleccionPublicaciones = this.db.collection<IPublicacion>('publicaciones');
+    this.coleccionVotos = this.db.collection<IVoto>('votos');
   }
+
 
 
   public agregarPublicacion(nuevaPublicacion: IPublicacion) {
@@ -27,9 +33,13 @@ export class DbfService {
   }
 
 
-  public traerTodosLasPublicaciones(): Observable<IPublicacion[]> {
+  public traerTodosLasPublicaciones(nombreColeccion: string): Observable<IPublicacion[]> {
 
-    return this.db.collection('publicaciones', ref =>
+    this.coleccionPublicaciones = this.db.collection<IPublicacion>(nombreColeccion);
+
+    this.coleccionVotos = this.db.collection<IVoto>('votos');
+
+    return this.db.collection(nombreColeccion, ref =>
       ref.orderBy('timeStamp', 'desc')).snapshotChanges()
       .pipe(
         map(actions =>
@@ -41,4 +51,14 @@ export class DbfService {
       )
 
   }
+
+  public votarUnaFoto(nuevoVoto: IVoto) {
+    this.coleccionVotos.add(nuevoVoto);
+  }
+
+  public traerVotosDeUnUsuario(usuario: firebase.User, idPublicacion: string) {
+    this.coleccionVotos.ref.where("usuario", "==", usuario.email).get();
+    return this.coleccionVotos.ref.where("idPublicacion", "==", idPublicacion).get();
+  }
+
 }
